@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: unora
+      POSTGRES_PASSWORD: unora
+      POSTGRES_USER: unora
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: ["CMD-SHELL", "pg_isready -U unora -d unora"]
+      timeout: 5s
+    # Host 5433 avoids clashing with Homebrew/local Postgres on 5432 (common on macOS).
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 5s
+    ports:
+      - "6379:6379"
+
+  api:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://unora:unora@postgres:5432/unora
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:

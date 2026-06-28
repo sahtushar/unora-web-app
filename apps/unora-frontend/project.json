@@ -1,0 +1,59 @@
+﻿{
+  "name": "unora-frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/unora-frontend/src",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-frontend",
+        "command": "pnpm exec vite"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "cwd": "apps/unora-frontend",
+        "command": "pnpm run build"
+      }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-frontend",
+        "command": "pnpm exec vite preview"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-frontend",
+        "command": "node --max-old-space-size=8192 ../../node_modules/eslint/bin/eslint.js src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-frontend",
+        "command": "pnpm exec prettier --write ./src"
+      }
+    },
+    "storybook": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-frontend",
+        "command": "pnpm exec storybook dev -p 6006"
+      }
+    },
+    "build-storybook": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/storybook-static"],
+      "options": {
+        "cwd": "apps/unora-frontend",
+        "command": "pnpm exec storybook build"
+      }
+    }
+  }
+}

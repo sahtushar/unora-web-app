@@ -1,0 +1,21 @@
+/* tsconfig.json just for eslint parser config! 
+see: https://stackoverflow.com/questions/58510287/parseroptions-project-has-been-set-for-typescript-eslint-parser */
+{
+  "extends": "../tsconfig.app.json",
+  "compilerOptions": {
+    /** Typed rules (e.g. strict-boolean-expressions) require this flag on the ESLint program. */
+    "strictNullChecks": true
+  },
+  "include": [
+    "../src/**/*",
+    "../eslint.config.mjs",
+    "../vite.config.ts",
+    "../vite.dev.config.ts",
+    "../storybook.tsconfig.json",
+    "../.prettierrc.js",
+    "../babelrc.json",
+    "../.npmrc"
+  ],
+  /* While linting don't exclude anything */
+  "exclude": []
+}

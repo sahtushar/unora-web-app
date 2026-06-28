@@ -1,0 +1,80 @@
+/**
+ * Unora theme tokens (RGB triplets for Tailwind `rgb(var(--u-*) / <alpha>)`).
+ * Extend by adding a new `[data-theme="…"]` block — keep the same variable names.
+ */
+:root {
+  --u-ink: 26 26 31;
+  --u-mist: 107 107 120;
+  --u-cloud: 244 243 247;
+  --u-snow: 250 249 252;
+  --u-line: 232 230 239;
+  --u-rose: 201 169 166;
+  --u-blush: 239 230 228;
+  --u-sage: 154 168 154;
+  --u-sage-muted: 223 230 223;
+  --u-accent: 44 44 50;
+  /** Romantic / brand accent (dating warmth) — used in gradients & highlights */
+  --u-brand: 201 169 166;
+  --u-brand-strong: 175 130 125;
+  /** Shell / page wash — also mapped as `unora-canvas-*` in `tailwind.config.ts`. */
+  --u-canvas-from: 244 243 247;
+  --u-canvas-via: 250 249 252;
+  --u-canvas-to: 239 230 228;
+}
+
+/** Warmer, coral-forward dating palette */
+[data-theme="ember"] {
+  --u-ink: 32 26 26;
+  --u-mist: 125 110 105;
+  --u-cloud: 252 248 246;
+  --u-snow: 255 252 250;
+  --u-line: 240 225 220;
+  --u-rose: 199 132 120;
+  --u-blush: 252 236 232;
+  --u-sage: 140 155 138;
+  --u-sage-muted: 228 234 226;
+  --u-accent: 48 36 34;
+  --u-brand: 199 132 120;
+  --u-brand-strong: 178 96 82;
+  --u-canvas-from: 252 244 240;
+  --u-canvas-via: 255 252 250;
+  --u-canvas-to: 252 232 226;
+}
+
+/** Cool, slate-blue intentional palette */
+[data-theme="tide"] {
+  --u-ink: 22 28 38;
+  --u-mist: 100 112 128;
+  --u-cloud: 242 244 248;
+  --u-snow: 248 250 252;
+  --u-line: 226 232 240;
+  --u-rose: 140 160 182;
+  --u-blush: 232 238 245;
+  --u-sage: 130 150 155;
+  --u-sage-muted: 222 230 234;
+  --u-accent: 35 45 58;
+  --u-brand: 120 145 168;
+  --u-brand-strong: 88 118 148;
+  --u-canvas-from: 238 242 248;
+  --u-canvas-via: 248 250 252;
+  --u-canvas-to: 232 238 245;
+}
+
+/** Forest greens — calm, grounded, nature-forward */
+[data-theme="grove"] {
+  --u-ink: 24 32 28;
+  --u-mist: 92 108 100;
+  --u-cloud: 243 247 244;
+  --u-snow: 248 250 248;
+  --u-line: 224 232 227;
+  --u-rose: 118 148 132;
+  --u-blush: 230 238 233;
+  --u-sage: 76 122 96;
+  --u-sage-muted: 216 228 220;
+  --u-accent: 28 42 36;
+  --u-brand: 108 138 118;
+  --u-brand-strong: 72 108 88;
+  --u-canvas-from: 236 244 239;
+  --u-canvas-via: 248 250 248;
+  --u-canvas-to: 228 236 231;
+}

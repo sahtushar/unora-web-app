@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    
+    <linearGradient id="pathGradient" x1="40" y1="40" x2="88" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#071120"/>
+      <stop offset="100%" stop-color="#071120"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="30" cy="80" r="4" fill="#071120" fill-opacity="0.7"/>
+  <circle cx="98" cy="80" r="4" fill="#071120" fill-opacity="0.7"/>
+  <circle cx="64" cy="110" r="4" fill="#071120" fill-opacity="0.7"/>
+
+  <path d="M40 45V75C40 88.2548 50.7452 99 64 99C77.2548 99 88 88.2548 88 75V45" stroke="url(#pathGradient)" stroke-width="6" stroke-linecap="round" filter="url(#glow)"/>
+
+  <circle cx="40" cy="40" r="8" fill="#071120" filter="url(#glow)"/>
+  <circle cx="88" cy="40" r="8" fill="#071120" filter="url(#glow)"/>
+  
+  <circle cx="40" cy="40" r="3" fill="white" fill-opacity="0.8"/>
+  <circle cx="88" cy="40" r="3" fill="white" fill-opacity="0.8"/>
+</svg>

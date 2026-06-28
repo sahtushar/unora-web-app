@@ -1,0 +1,93 @@
+﻿{
+  "name": "unora-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/unora-backend/src",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec tsx watch src/server.ts"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec tsc -p tsconfig.build.json"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "node dist/server.js"
+      }
+    },
+    "start-prod": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "node dist/db/migrate.js && node dist/server.js"
+      }
+    },
+    "db-generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec drizzle-kit generate"
+      }
+    },
+    "db-migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec tsx src/db/migrate.ts"
+      }
+    },
+    "db-studio": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec drizzle-kit studio"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "node --max-old-space-size=8192 ../../node_modules/eslint/bin/eslint.js src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec prettier --write ./src"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec vitest run"
+      }
+    },
+    "test-integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec cross-env DATABASE_INTEGRATION=1 vitest run test/auth.integration.test.ts"
+      }
+    },
+    "test-watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/unora-backend",
+        "command": "pnpm exec vitest"
+      }
+    }
+  }
+}

@@ -1,0 +1,113 @@
+@import "./styles/theme-variables.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-sans text-body text-unora-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-unora-brand/45;
+  }
+}
+
+@layer components {
+  /** Outer canvas — uses theme canvas tokens for preset-aware gradients */
+  .app-canvas {
+    min-height: 100dvh;
+    width: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--u-canvas-from) / 0.88) 0%,
+      rgb(var(--u-canvas-via) / 1) 46%,
+      rgb(var(--u-canvas-to) / 0.32) 100%
+    );
+  }
+
+  /** Centered mobile column; on larger viewports feels like a calm app surface, not a dashboard. */
+  .app-shell-surface {
+    @apply relative mx-auto flex w-full max-w-app min-h-dvh flex-col bg-white px-app-5 pb-app-nav pt-[max(env(safe-area-inset-top,0px),0.5rem)] shadow-none;
+    @apply sm:my-app-6 sm:min-h-[min(100dvh,52rem)] sm:overflow-hidden sm:rounded-3xl sm:border sm:border-unora-line/60 sm:shadow-phone sm:backdrop-blur-xl;
+  }
+
+  /**
+   * Discover “active connection” callout — animated theme border + soft lift.
+   * Border is a clipped rotating conic layer behind the inner card (see ActiveConnectionHint).
+   */
+  .active-connection-hint-frame {
+    position: relative;
+    isolation: isolate;
+    border-radius: 1.5rem;
+    padding: 2px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgb(var(--u-line) / 0.45),
+      0 12px 36px -10px rgb(var(--u-brand-strong) / 0.28),
+      0 4px 14px -2px rgb(var(--u-ink) / 0.06);
+    transition:
+      box-shadow 220ms ease-out,
+      transform 220ms ease-out;
+  }
+
+  .active-connection-hint-frame:hover {
+    box-shadow:
+      0 0 0 1px rgb(var(--u-brand-strong) / 0.22),
+      0 16px 44px -10px rgb(var(--u-brand-strong) / 0.34),
+      0 6px 18px -2px rgb(var(--u-ink) / 0.08);
+  }
+
+  .active-connection-hint-orbit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 0;
+    width: 175%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+      from 0deg,
+      rgb(var(--u-brand-strong) / 0.98),
+      rgb(var(--u-brand) / 0.55),
+      rgb(var(--u-sage) / 0.82),
+      rgb(var(--u-blush) / 0.72),
+      rgb(var(--u-rose) / 0.55),
+      rgb(var(--u-brand-strong) / 0.98)
+    );
+    animation: active-connection-orbit 5.75s linear infinite;
+  }
+
+  @keyframes active-connection-orbit {
+    from {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .active-connection-hint-orbit {
+      animation: none;
+      opacity: 0.65;
+    }
+  }
+}
+
+@layer utilities {
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .pressable {
+    @apply tap-highlight-none transition-transform duration-200 ease-out active:scale-[0.98];
+  }
+}

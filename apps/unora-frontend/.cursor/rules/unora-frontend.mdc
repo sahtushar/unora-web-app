@@ -1,0 +1,51 @@
+---
+description: Unora frontend — stack, layout, copy, and change discipline
+alwaysApply: true
+---
+
+# Unora frontend
+
+## Stack
+
+Vite, React 18, TypeScript, Tailwind CSS 3, TanStack Query, React Router 6, **lucide-react** (icons). Prefer functional components and hooks.
+
+## Paths and layout
+
+- Import with the `@/` alias (points at `src/`).
+- Feature screens and feature-only UI live under `src/features/<feature>/` (e.g. `discover`, `strings` co-located with features).
+- Shared primitives and shell UI live in `src/components/ui/`; export new shared components from `src/components/ui/index.ts` when appropriate.
+- Shared hooks: `src/hooks/`. Shared types: `src/types/`. Routes: `src/lib/routes.ts` — use `routes.*`, not raw path strings in navigation.
+
+## Reusable components
+
+- **Where to put them:** UI that is used across features or is a generic primitive belongs in `src/components/ui/` and should be exported from `src/components/ui/index.ts` when imported from multiple places. Keep components that only make sense for one feature next to that feature under `src/features/<feature>/`.
+- **When to extract:** Prefer a small reusable component when the same markup or behavior appears twice, or when a screen chunk is long and a named subcomponent improves clarity. Avoid premature abstraction for one-off layout.
+- **API design:** Prefer explicit props with clear TypeScript types; use composition (children, slots) over props that switch large unrelated layouts. Reuse tokens, spacing, and patterns from sibling `ui` components rather than inventing new visual language.
+
+## Storybook
+
+- Whenever you add a **new shared UI component** under `src/components/ui/`, add a matching **`*.stories.tsx`** in **`src/components/ui/stories/`** (CSF, `@/` imports). Cover **meaningful variants and cases**: prop combinations (sizes, tones, variants), empty/loading/error states where applicable, and any behavior that needs providers or decorators (match existing stories in that folder).
+- Whenever you add a **new route-level page or large feature screen** under `src/features/<feature>/`, add **`*.stories.tsx`** under **`src/features/<feature>/stories/`** for the same screen, with variants that reflect real routes (e.g. with/without data, key query states). Prefer the global Storybook preview (`AppProviders`, router) unless the story needs a focused decorator.
+- When you **change** component props or visible states in a meaningful way, update the corresponding stories so docs stay accurate.
+
+## Copy and constants
+
+- User-facing strings for feature screens belong in `src/features/strings.ts` (or existing small constants files under `src/constants/`). Avoid scattering long product copy in JSX unless it is trivially local.
+
+## Style and implementation
+
+- Use `cn()` from `@/lib/cn` for conditional Tailwind classes.
+- Match naming, imports, and component patterns already used in the touched file or sibling files.
+- Keep changes minimal: no drive-by refactors, no unrelated files, no new markdown/docs unless the user asks.
+- **Icons:** Use **`lucide-react`** (`import { Heart, X, … } from "lucide-react"`). Do **not** add new hand-written inline `<svg>` icon components unless there is no Lucide equivalent (rare); prefer Lucide’s `size`, `strokeWidth`, `className`, and `fill` props and inherit color via `text-unora-*` / `currentColor`.
+
+## Global theme
+
+- **Tokens and presets:** Color semantics live in `src/styles/theme-variables.css` as `--u-*` RGB triplets on `:root` and on `[data-theme="…"]` blocks. Every preset must define the **same** variable names so Tailwind’s `unora.*` colors keep working.
+- **Tailwind:** `tailwind.config.ts` maps `unora.*` to those variables — if you add a new token, extend both the CSS and the `unora` color map (and any related comments there).
+- **UI usage:** Prefer `bg-unora-*`, `text-unora-*`, `border-unora-*`, etc., over hardcoded hex/RGB in components so screens respect theme presets.
+- **React layer:** Runtime theme id, persistence, and `document.documentElement` `data-theme` are handled in `src/theme/` (`ThemeProvider`, `themeIds.ts`, `useTheme`). Adding a named preset requires updating `THEME_IDS`, labels, `THEME_COLOR_HEX`, and a matching `[data-theme="…"]` block in `theme-variables.css` (default is no `data-theme` attribute).
+
+## Verification
+
+After non-trivial edits, run `npm run build` (and fix any new lint issues in touched files).

@@ -1,0 +1,60 @@
+# Render Blueprint (Infrastructure as Code).
+# https://render.com/docs/infrastructure-as-code
+#
+# Deploy with Dashboard → New → Blueprint (this file). A plain "Docker Web Service" does NOT
+# receive DATABASE_URL / REDIS_URL from Postgres/Key Value unless you add them manually.
+#
+# After first deploy, set sync:false secrets in the dashboard (or via CLI), especially:
+#   GOOGLE_CLIENT_IDS, CORS_ORIGINS, PUBLIC_MEDIA_BASE_URL
+# For production profile photos, prefer USER_PHOTOS_STORAGE=s3 and S3_* (see README).
+
+databases:
+  - name: unora-postgres
+    databaseName: unora
+    region: oregon
+
+services:
+  - type: keyvalue
+    name: unora-redis
+    region: oregon
+    # Same-region private access from the web service (no public Redis port).
+    ipAllowList: []
+    maxmemoryPolicy: noeviction
+
+  - type: web
+    name: unora-backend
+    runtime: docker
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "true"
+      - key: REQUIRE_HTTPS
+        value: "true"
+      - key: ENABLE_OPENAPI_UI
+        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: unora-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: unora-redis
+          type: keyvalue
+          property: connectionString
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: OTP_PEPPER
+        generateValue: true
+      - key: GOOGLE_CLIENT_IDS
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: PUBLIC_MEDIA_BASE_URL
+        sync: false
+      # Optional: switch to s3 and set S3_BUCKET, S3_REGION, keys, etc. in the dashboard.
+      - key: USER_PHOTOS_STORAGE
+        value: local

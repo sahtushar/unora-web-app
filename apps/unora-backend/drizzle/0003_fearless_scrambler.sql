@@ -1,0 +1,1 @@
+ALTER TABLE "user_match_preferences" ADD COLUMN "age_range_strict" boolean DEFAULT false NOT NULL;

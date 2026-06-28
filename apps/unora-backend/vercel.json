@@ -1,0 +1,17 @@
+﻿{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd ../.. && corepack enable && corepack prepare pnpm@10.33.0 --activate && pnpm install --no-frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm nx run unora-backend:build && node apps/unora-backend/dist/db/migrate.js",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    }
+  ],
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 60
+    }
+  }
+}
+

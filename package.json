@@ -1,0 +1,27 @@
+﻿{
+  "name": "unora-web-app",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "nx run-many -t dev --projects=unora-backend,unora-frontend --parallel=2",
+    "dev:frontend": "nx run unora-frontend:dev",
+    "dev:backend": "nx run unora-backend:dev",
+    "build": "nx run-many -t build --all",
+    "build:frontend": "nx run unora-frontend:build",
+    "build:backend": "nx run unora-backend:build",
+    "lint": "nx run-many -t lint --all",
+    "test": "nx run-many -t test --all",
+    "format": "nx run-many -t format --all",
+    "storybook": "nx run unora-frontend:storybook",
+    "graph": "nx graph"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nx": "latest"
+  }
+}
