@@ -5,6 +5,7 @@ import {RequireCompleteProfile} from "@/features/profile/RequireCompleteProfile"
 import {routes} from "@/lib/routes";
 
 import {InstallAppPrompt} from "./InstallAppPrompt";
+import {LocationSyncGate} from "./LocationSyncGate";
 
 export function AppShell() {
   const location = useLocation();
@@ -18,6 +19,7 @@ export function AppShell() {
         </RequireCompleteProfile>
       </main>
       <InstallAppPrompt hideForCurrentRoute={hideBottomNav} />
+      <LocationSyncGate />
       {hideBottomNav ? null : <BottomNav />}
     </div>
   );

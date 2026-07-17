@@ -42,27 +42,28 @@ export const strings = {
   previewWelcome: {
     backdropDismissAria: "Dismiss welcome dialog",
     closeAria: "Close",
-    title: "Welcome to the Unora preview",
-    leadStart: "You’re seeing ",
-    leadEmphasis: "an early build",
+    title: "Unlock matches around you",
+    leadStart: "Unora gets brighter when it knows ",
+    leadEmphasis: "where your device is",
     leadMid:
-      " — a gentle first look at what we’re shaping. We’re designing around one idea: your attention deserves ",
-    leadEmphasis2: "one honest lane for romance",
-    leadEnd: " — clear intentions, mutual respect, and calm over chaos.",
-    midStart: "Take your time in ",
-    midEmphasis: "Discover, Connection, Matches, and Profile",
+      " - not to follow you around, but to find people who are actually ",
+    leadEmphasis2: "close enough to meet",
+    leadEnd:
+      ". Enable location when your device asks, and your matches around you get instantly smarter.",
+    midStart: "Your exact spot stays private; location helps tune ",
+    midEmphasis: "nearby discovery, distance, and local matches",
     midEnd:
-      " — nothing here talks to the outside world yet, so you can explore without pressure.",
+      " so every profile feels closer to your real world, not just your screen.",
     feedbackIntro:
-      "If a screen feels right, confusing, or quietly magical, we’d love to hear it.",
+      "One quick yes now saves you from browsing great profiles that are nowhere near your orbit.",
     feedbackStart: "Write to ",
     feedbackEmail: "sahtushar@gmail.com",
-    feedbackMid: " — ",
-    feedbackEmphasis: "every note",
-    feedbackEnd: " helps us tune the calm before we open the doors.",
-    dismissCta: "Start exploring",
-    feedbackCta: "Email feedback",
-    emailSubject: "Unora preview — feedback",
+    feedbackMid: " - ",
+    feedbackEmphasis: "we will help you switch location on",
+    feedbackEnd: " if the prompt does not appear.",
+    dismissCta: "I'll enable location",
+    feedbackCta: "Need help",
+    emailSubject: "Unora location help",
   },
 
   installPrompt: {
@@ -711,6 +712,22 @@ export const strings = {
             lastNamePlaceholder: "Optional",
             lastNamePrivacy:
               "Kept private by default. We only show your last name to mutual matches and your current or past connections.",
+          },
+          locationPrompt: {
+            backdropDismissAria: "Location prompt requires action",
+            cta: "Enable location",
+            description:
+              "Turn on location so Unora can bring nearby matches into focus. Your exact spot stays private; it simply helps us show people close enough for real plans.",
+            error:
+              "Location is required to continue. Please allow location access when your device asks.",
+            geocodeError:
+              "We could not read your city from that location. Please try again with location services enabled.",
+            loadingCta: "Finding your area...",
+            saveError:
+              "We could not save your location just now. Please try again.",
+            unsupported:
+              "This device or browser does not support location access. Try again from a browser with location services enabled.",
+            title: "Find matches around you",
           },
           title:
             "Start with a few details so your profile feels unmistakably you.",

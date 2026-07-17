@@ -1,11 +1,14 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
+import {useQueryClient} from "@tanstack/react-query";
 import {
   CalendarDays,
   Check,
   CircleHelp,
+  LocateFixed,
   LockKeyhole,
   type LucideIcon,
+  MapPin,
   Mars,
   NonBinary,
   UserRound,
@@ -13,13 +16,22 @@ import {
   VenusAndMars,
 } from "lucide-react";
 
+import {Button, Modal} from "@/components/ui";
 import {cn} from "@/lib/cn";
-import type {GenderPresentation} from "@/types";
+import {syncBrowserLocationToProfile} from "@/lib/syncBrowserLocation";
+import {queryKeys} from "@/services/queryKeys";
+import type {
+  CurrentUserProfile,
+  GenderPresentation,
+  UserLocationDetails,
+} from "@/types";
 
 import {strings} from "../../strings";
 import type {CompletionDraft} from "./types";
 
-const f = strings.profile.profileCompletionFlow.slides.welcome.fields;
+const welcome = strings.profile.profileCompletionFlow.slides.welcome;
+const f = welcome.fields;
+const locationPrompt = welcome.locationPrompt;
 const GENDER_OPTIONS: Array<{
   icon: LucideIcon;
   label: string;
@@ -35,18 +47,123 @@ const GENDER_OPTIONS: Array<{
   },
 ];
 
+function isGeolocationError(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error;
+}
+
 export function WelcomeBasicsSlide({
   draft,
   onPatch,
+  locationEnabled,
+  onLocationSynced,
 }: {
   draft: CompletionDraft;
   onPatch: (partial: Partial<CompletionDraft>) => void;
+  locationEnabled: boolean;
+  onLocationSynced: (userLocation: UserLocationDetails) => void;
 }) {
+  const queryClient = useQueryClient();
   const [dobFocused, setDobFocused] = useState(false);
+  const [locationPromptOpen, setLocationPromptOpen] = useState(
+    () => !locationEnabled
+  );
+  const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationSubmitting, setLocationSubmitting] = useState(false);
   const showDateInput = dobFocused || draft.dateOfBirth.trim().length > 0;
 
+  const closeLocationPrompt = useCallback(() => {
+    setLocationPromptOpen(false);
+  }, []);
+
+  const handleEnableLocation = useCallback(async () => {
+    if (!("geolocation" in globalThis.navigator)) {
+      setLocationError(locationPrompt.unsupported);
+      return;
+    }
+    if (locationSubmitting) {
+      return;
+    }
+
+    setLocationSubmitting(true);
+    setLocationError(null);
+
+    try {
+      const result = await syncBrowserLocationToProfile();
+      queryClient.setQueryData<CurrentUserProfile>(
+        queryKeys.currentUser,
+        (prev) =>
+          prev === undefined
+            ? prev
+            : {
+                ...prev,
+                location: result.location,
+                userLocation: result.userLocation,
+              }
+      );
+      onLocationSynced(result.userLocation);
+      closeLocationPrompt();
+    } catch (error) {
+      setLocationError(
+        isGeolocationError(error)
+          ? locationPrompt.error
+          : locationPrompt.saveError
+      );
+    } finally {
+      setLocationSubmitting(false);
+    }
+  }, [
+    closeLocationPrompt,
+    locationSubmitting,
+    onLocationSynced,
+    queryClient,
+  ]);
+
+  const locationPromptTitle = (
+    <span className="flex items-start gap-app-2">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-unora-line/85 bg-unora-cloud/70 text-unora-brand-strong shadow-soft">
+        <MapPin className="h-5 w-5" strokeWidth={1.85} aria-hidden />
+      </span>
+      <span className="min-w-0 pt-0.5">{locationPrompt.title}</span>
+    </span>
+  );
+
   return (
-    <div className="space-y-app-6">
+    <>
+      <Modal
+        open={locationPromptOpen}
+        onClose={() => {}}
+        title={locationPromptTitle}
+        description={
+          <div className="space-y-app-3">
+            <p>{locationPrompt.description}</p>
+            {locationError === null ? null : (
+              <p className="rounded-xl border border-red-200 bg-red-50 px-app-3 py-app-2 text-sm font-medium text-red-800">
+                {locationError}
+              </p>
+            )}
+          </div>
+        }
+        backdropDismissAriaLabel={locationPrompt.backdropDismissAria}
+        closeAriaLabel={null}
+        className="border-unora-line/95 bg-gradient-to-b from-unora-snow via-unora-blush/20 to-unora-cloud/45"
+        footer={
+          <div className="flex w-full min-w-0">
+            <Button
+              type="button"
+              variant="primary"
+              className="w-full gap-app-2"
+              disabled={locationSubmitting}
+              onClick={handleEnableLocation}>
+              <LocateFixed className="h-4 w-4" aria-hidden />
+              {locationSubmitting
+                ? locationPrompt.loadingCta
+                : locationPrompt.cta}
+            </Button>
+          </div>
+        }
+      />
+
+      <div className="space-y-app-6">
       <div className="rounded-3xl border border-unora-line/70 bg-white px-app-4 py-app-4 shadow-soft">
         <label className="block">
           <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-unora-mist">
@@ -146,6 +263,7 @@ export function WelcomeBasicsSlide({
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

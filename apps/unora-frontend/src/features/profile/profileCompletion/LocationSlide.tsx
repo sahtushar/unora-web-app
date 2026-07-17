@@ -6,9 +6,9 @@ import {renderToStaticMarkup} from "react-dom/server";
 import {Button} from "@/components/ui";
 
 import {strings} from "../../strings";
+import {extractLocationFields, loadGoogleMaps} from "./locationGeocoding";
 import type {CompletionDraft} from "./types";
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const LOCATION_FOCUS_ZOOM = 16;
 const THEME_PIN_COLOR = "#355D54";
 const l = strings.profile.profileCompletionFlow.location;
@@ -21,98 +21,6 @@ function createLucidePinDataUrl(color: string): string {
 }
 
 const LUCIDE_PIN_DATA_URL = createLucidePinDataUrl(THEME_PIN_COLOR);
-
-let googleMapsPromise: Promise<void> | null = null;
-
-function isGoogleMapsScriptLoaded(): boolean {
-  return (globalThis as {google?: {maps?: unknown}}).google?.maps !== undefined;
-}
-
-function loadGoogleMaps(): Promise<void> {
-  if (isGoogleMapsScriptLoaded()) {
-    return Promise.resolve();
-  }
-
-  if (!googleMapsPromise) {
-    googleMapsPromise = new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => resolve();
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
-
-  return googleMapsPromise;
-}
-
-function getAddressPart(
-  components: google.maps.GeocoderAddressComponent[],
-  type: string
-): string {
-  const found = components.find((component) => {
-    for (const t of component.types) {
-      if (t === type) {
-        return true;
-      }
-    }
-    return false;
-  });
-  return typeof found?.long_name === "string" ? found.long_name : "";
-}
-
-function extractLocationFields(result: google.maps.GeocoderResult) {
-  const components = result.address_components;
-
-  const area = (() => {
-    const a = getAddressPart(components, "sublocality_level_1");
-    if (a.length > 0) {
-      return a;
-    }
-    const b = getAddressPart(components, "sublocality");
-    if (b.length > 0) {
-      return b;
-    }
-    const c = getAddressPart(components, "neighborhood");
-    if (c.length > 0) {
-      return c;
-    }
-    return getAddressPart(components, "route");
-  })();
-
-  const city = (() => {
-    const a = getAddressPart(components, "locality");
-    if (a.length > 0) {
-      return a;
-    }
-    const b = getAddressPart(components, "administrative_area_level_3");
-    if (b.length > 0) {
-      return b;
-    }
-    return getAddressPart(components, "administrative_area_level_2");
-  })();
-
-  const country = getAddressPart(components, "country");
-
-  const label = (() => {
-    const line = [area, city]
-      .filter((part) => part.trim().length > 0)
-      .join(", ");
-    if (line.length > 0) {
-      return line;
-    }
-    return result.formatted_address;
-  })();
-
-  return {
-    area,
-    city,
-    country,
-    label,
-  };
-}
 
 export function LocationSlide({
   draft,

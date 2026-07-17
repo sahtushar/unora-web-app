@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 import {useQueryClient} from "@tanstack/react-query";
 import {ArrowRight, LogOut} from "lucide-react";
@@ -8,10 +8,11 @@ import {Button, ScreenSkeleton, useToast} from "@/components/ui";
 import {useAuth} from "@/features/auth/useAuth";
 import {useCurrentUser} from "@/hooks/useCurrentUser";
 import {cn} from "@/lib/cn";
+import {AUTH_LOCATION_SYNCED_EVENT} from "@/lib/locationSyncEvents";
 import {routes} from "@/lib/routes";
 import {patchUserProfileDetails} from "@/services/profileDetailsApi";
 import {queryKeys} from "@/services/queryKeys";
-import type {CurrentUserProfile} from "@/types";
+import type {CurrentUserProfile, UserLocationDetails} from "@/types";
 
 import {strings} from "../strings";
 import {AboutSlide} from "./profileCompletion/AboutSlide";
@@ -212,14 +213,54 @@ function ProfileCompletionFlowBody({user}: {user: CurrentUserProfile}) {
       longitude: hasCoords ? ul.longitude : null,
     };
   });
+  const [locationEnabled, setLocationEnabled] = useState(
+    () =>
+      draft.gps !== null &&
+      Number.isFinite(draft.latitude) &&
+      Number.isFinite(draft.longitude)
+  );
 
   const slideId: SlideId = SLIDE_ORDER[slideIndex] ?? "welcome";
   const isLastSlide = slideIndex === SLIDE_ORDER.length - 1;
-  const canContinue = currentSlideValid(slideId, draft);
+  const slideValid = currentSlideValid(slideId, draft);
+  const canContinue = slideValid && (slideId !== "welcome" || locationEnabled);
 
   const patchDraft = (partial: Partial<CompletionDraft>) => {
     setDraft((prev) => ({...prev, ...partial}));
   };
+
+  const applySyncedLocation = useCallback((detail: UserLocationDetails) => {
+    setDraft((prev) => ({
+      ...prev,
+      area: detail.area,
+      city: detail.city,
+      country: detail.country,
+      gps: {lat: detail.latitude, lng: detail.longitude},
+      latitude: detail.latitude,
+      location: detail.label,
+      longitude: detail.longitude,
+    }));
+    setLocationEnabled(true);
+  }, []);
+
+  useEffect(() => {
+    const onLocationSynced = (event: Event) => {
+      const detail = (event as CustomEvent<CurrentUserProfile["userLocation"]>)
+        .detail;
+      if (detail === null || detail === undefined) {
+        return;
+      }
+
+      applySyncedLocation(detail);
+    };
+
+    globalThis.addEventListener(AUTH_LOCATION_SYNCED_EVENT, onLocationSynced);
+    return () =>
+      globalThis.removeEventListener(
+        AUTH_LOCATION_SYNCED_EVENT,
+        onLocationSynced
+      );
+  }, [applySyncedLocation]);
 
   const patchPreferences = (partial: Partial<ProfilePreferencesDraft>) => {
     setDraft((prev) => ({
@@ -403,7 +444,14 @@ function ProfileCompletionFlowBody({user}: {user: CurrentUserProfile}) {
     }
   };
 
-  let slideNode = <WelcomeBasicsSlide draft={draft} onPatch={patchDraft} />;
+  let slideNode = (
+    <WelcomeBasicsSlide
+      draft={draft}
+      onPatch={patchDraft}
+      locationEnabled={locationEnabled}
+      onLocationSynced={applySyncedLocation}
+    />
+  );
   if (slideId === "preferences") {
     slideNode = (
       <PreferencesSlide

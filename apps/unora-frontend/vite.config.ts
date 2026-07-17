@@ -6,15 +6,17 @@ import {VitePWA} from "vite-plugin-pwa";
 import {defineConfig, loadEnv} from "vite";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
+const monorepoRootDir = path.resolve(rootDir, "../..");
 
 export default defineConfig(({mode}) => {
-  const env = loadEnv(mode, rootDir, "VITE_");
+  const env = loadEnv(mode, monorepoRootDir, "VITE_");
   const rawApi = env.VITE_API_URL?.trim() ?? "";
   const proxyTarget = /^https?:\/\//i.test(rawApi)
     ? rawApi.replace(/\/$/, "")
     : "http://127.0.0.1:8000";
 
   return {
+    envDir: monorepoRootDir,
     /** Top-level `await` in `main.tsx` needs ES2022+; aligns with `tsconfig.app` target. */
     build: {
       target: "es2022",

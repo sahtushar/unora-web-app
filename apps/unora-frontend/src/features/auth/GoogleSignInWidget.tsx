@@ -28,7 +28,7 @@ type GoogleAccountsId = {
       shape: "pill";
       size: "large";
       text: "continue_with";
-      theme: "filled_blue";
+      theme: "filled_blue" | "outline";
       type: "standard";
       width: number;
     }
@@ -86,7 +86,7 @@ export function GoogleSignInWidget({clientId, onCredential, disabled}: Props) {
       host.innerHTML = "";
       g.renderButton(host, {
         type: "standard",
-        theme: "filled_blue",
+        theme: "outline",
         size: "large",
         text: "continue_with",
         shape: "pill",
@@ -110,7 +110,7 @@ export function GoogleSignInWidget({clientId, onCredential, disabled}: Props) {
   return (
     <div
       className={cn(
-        "flex min-h-[44px] w-full max-w-[21.5rem] justify-center",
+        "flex min-h-[44px] w-full max-w-[21.5rem] justify-center rounded-full bg-white shadow-soft ring-1 ring-unora-line/70",
         "[&>div]:w-full [&_iframe]:!w-full [&_iframe]:!rounded-full",
         disabled === true && "pointer-events-none opacity-50"
       )}

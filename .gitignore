@@ -3,6 +3,9 @@
 .vercel
 .DS_Store
 *.log
+.env
+.env.*
+!.env.example
 
 apps/*/node_modules
 apps/*/dist

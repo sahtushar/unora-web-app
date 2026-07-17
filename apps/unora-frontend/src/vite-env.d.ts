@@ -5,6 +5,8 @@ interface ImportMetaEnv {
   readonly VITE_API_URL?: string;
   /** OAuth 2.0 Web client ID from Google Cloud Console (GIS). */
   readonly VITE_GOOGLE_CLIENT_ID?: string;
+  /** Browser key for Google Maps JavaScript API. */
+  readonly VITE_GOOGLE_MAPS_API_KEY?: string;
   /** Public Mapbox token for client-side Geocoding API (see `locationAutocomplete.ts`). */
   readonly VITE_MAPBOX_ACCESS_TOKEN?: string;
 }

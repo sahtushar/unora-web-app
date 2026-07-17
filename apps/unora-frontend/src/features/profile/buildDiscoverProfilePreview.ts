@@ -61,9 +61,7 @@ export function buildDiscoverProfilePreview(
       id: user.verification.id,
     },
     jobTitle: pub(draft.jobTitlePublic) ? draft.jobTitle.trim() : "",
-    companyName: pub(draft.companyNamePublic)
-      ? draft.companyName.trim()
-      : "",
+    companyName: pub(draft.companyNamePublic) ? draft.companyName.trim() : "",
     degree: pub(draft.degreePublic) ? draft.degree : "",
     schoolName: pub(draft.schoolNamePublic) ? draft.schoolName.trim() : "",
     hometown: pub(draft.hometownPublic) ? draft.hometown.trim() : "",
